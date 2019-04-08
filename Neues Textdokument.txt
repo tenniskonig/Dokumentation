@@ -1,0 +1,7 @@
+In Powershell
+docker build -t chsldz/tenniskoenig .
+docker push chsldz/tenniskoenig
+
+Jar exportieren
+
+ca 1,5h

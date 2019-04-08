@@ -1,0 +1,99 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema TenniskoenigDB
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema TenniskoenigDB
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `TenniskoenigDB` DEFAULT CHARACTER SET utf8 ;
+USE `TenniskoenigDB` ;
+
+-- -----------------------------------------------------
+-- Table `TenniskoenigDB`.`User`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `TenniskoenigDB`.`User` (
+  `UserID` INT NOT NULL,
+  `Forename` VARCHAR(45) NOT NULL,
+  `Name` VARCHAR(45) NOT NULL,
+  `Female` TINYINT NOT NULL,
+  `Admin` TINYINT NOT NULL,
+  PRIMARY KEY (`UserID`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `TenniskoenigDB`.`Game`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `TenniskoenigDB`.`Game` (
+  `GameID` INT NOT NULL AUTO_INCREMENT,
+  `Player1Team1` INT NOT NULL,
+  `Player2Team2` INT NOT NULL,
+  `Player3Team1` INT NULL,
+  `Player4Team2` INT NULL,
+  `Results` VARCHAR(45) NULL,
+  `GameSetTeam1` INT NOT NULL,
+  `GameSetTeam2` INT NOT NULL,
+  `GameDate` DATE NOT NULL,
+  `PlayTime` TIME NULL,
+  PRIMARY KEY (`GameID`),
+  INDEX `Player1` (`Player1Team1` ASC) INVISIBLE,
+  INDEX `Player2` (`Player2Team2` ASC) VISIBLE,
+  INDEX `Player3` (`Player3Team1` ASC) INVISIBLE,
+  INDEX `Player4` (`Player4Team2` ASC) INVISIBLE,
+  CONSTRAINT `Player1_Key`
+    FOREIGN KEY (`Player1Team1`)
+    REFERENCES `TenniskoenigDB`.`User` (`UserID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `Player2_Key`
+    FOREIGN KEY (`Player2Team2`)
+    REFERENCES `TenniskoenigDB`.`User` (`UserID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `Player3_Key`
+    FOREIGN KEY (`Player3Team1`)
+    REFERENCES `TenniskoenigDB`.`User` (`UserID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `Player4_Key`
+    FOREIGN KEY (`Player4Team2`)
+    REFERENCES `TenniskoenigDB`.`User` (`UserID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `TenniskoenigDB`.`Played`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `TenniskoenigDB`.`Played` (
+  `GameID` INT NOT NULL,
+  `UserID` INT NOT NULL,
+  `Points` INT NOT NULL,
+  `PlayedID` INT NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`PlayedID`),
+  INDEX `UserID_Index` (`UserID` ASC) INVISIBLE,
+  INDEX `GameID_Index` (`GameID` ASC) VISIBLE,
+  UNIQUE INDEX `UserID_GameID_Unique` (`UserID` ASC, `GameID` ASC) VISIBLE,
+  CONSTRAINT `User_Played`
+    FOREIGN KEY (`UserID`)
+    REFERENCES `TenniskoenigDB`.`User` (`UserID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `Game_Played`
+    FOREIGN KEY (`GameID`)
+    REFERENCES `TenniskoenigDB`.`Game` (`GameID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
